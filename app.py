@@ -13,61 +13,146 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# BMW 디자인 시스템 스타일
+# HD현대 디자인 시스템 스타일
 st.markdown("""
     <style>
     * {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
-    /* 색상 시스템 */
+    /* HD현대 색상 시스템 */
     :root {
-        --bmw-blue: #1c69d4;
-        --bmw-blue-dark: #0653b6;
-        --surface-dark: #1a2129;
-        --surface-dark-elevated: #262e38;
-        --canvas: #ffffff;
-        --surface-card: #fafafa;
-        --surface-soft: #f7f7f7;
-        --surface-strong: #ebebeb;
-        --hairline: #e6e6e6;
-        --ink: #262626;
-        --body: #3c3c3c;
-        --muted: #6b6b6b;
-        --on-dark: #ffffff;
+        /* 주요 색상 */
+        --primary: #003DA5;
+        --primary-dark: #002D7F;
+        --primary-light: #1A4B8C;
+        --accent-blue: #3B82F6;
+        --accent-green: #22C55E;
+        --accent-teal: #0E7490;
+
+        /* 배경 및 표면 */
+        --surface-dark: #0F172A;
+        --surface-dark-elevated: #1E293B;
+        --canvas: #FFFFFF;
+        --surface-card: #F8F9FA;
+        --surface-soft: #F1F5F9;
+        --surface-strong: #E2E8F0;
+        --hairline: #CBD5E1;
+
+        /* 텍스트 */
+        --ink: #0F172A;
+        --body: #334155;
+        --muted: #64748B;
+        --on-dark: #FFFFFF;
+
+        /* 상태 색상 */
+        --success: #16A34A;
+        --warning: #EAB308;
+        --error: #DC2626;
+        --info: #0284C7;
     }
 
     /* 배경 */
     .main {
-        background-color: var(--canvas);
+        background-color: var(--surface-soft);
         padding: 0;
     }
 
+    body, html {
+        background-color: var(--surface-soft);
+    }
+
     /* 타이포그래피 */
-    h1, h2, h3 {
+    h1, h2, h3, h4, h5, h6 {
         font-weight: 700;
         color: var(--ink);
-        letter-spacing: 0;
+        letter-spacing: -0.5px;
     }
 
-    p, span {
-        font-weight: 300;
+    h1 {
+        font-size: 48px;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 36px;
+        line-height: 1.3;
+    }
+
+    h3 {
+        font-size: 28px;
+        line-height: 1.3;
+    }
+
+    p, span, label {
+        font-weight: 400;
         color: var(--body);
+        line-height: 1.6;
     }
 
-    /* 메트릭 카드 - 헤로 밴드 스타일 */
-    .metric-hero {
-        background-color: var(--surface-dark);
+    /* 헤로 밴드 - 로그인 페이지 */
+    .hero-band {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         color: var(--on-dark);
         padding: 80px 32px;
-        margin: 0 0 80px 0;
-        border-radius: 0;
+        margin: 0 0 60px 0;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 61, 165, 0.15);
+    }
+
+    .hero-band h1, .hero-band h2 {
+        color: var(--on-dark);
+        margin-bottom: 16px;
+    }
+
+    .hero-band p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+    }
+
+    /* 메트릭 카드 - 대시보드 */
+    .metric-hero {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent-blue) 100%);
+        color: var(--on-dark);
+        padding: 60px 32px;
+        margin: 0 0 60px 0;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 61, 165, 0.15);
     }
 
     .metric-hero h2 {
         color: var(--on-dark);
-        margin: 0 0 40px 0;
-        font-size: 48px;
+        margin-bottom: 24px;
+        font-size: 40px;
+    }
+
+    /* 메트릭 카드 그리드 */
+    .metric-card {
+        background-color: var(--canvas);
+        border: 1px solid var(--hairline);
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .metric-card h3 {
+        color: var(--primary);
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .metric-card p {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 0;
     }
 
     /* 카드 */
@@ -76,42 +161,68 @@ st.markdown("""
         border: 1px solid var(--hairline);
         padding: 24px;
         margin-bottom: 24px;
-        border-radius: 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .card-light {
         background-color: var(--surface-card);
+        border: 1px solid var(--hairline);
+    }
+
+    .card-accent {
+        background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-teal) 100%);
+        color: var(--on-dark);
         border: none;
     }
 
-    /* 버튼 - BMW 스타일 */
+    /* 버튼 - HD현대 스타일 */
     .stButton > button {
-        background-color: var(--bmw-blue);
+        background-color: var(--primary);
         color: white;
-        border-radius: 0;
-        padding: 14px 32px;
-        height: 48px;
-        font-weight: 700;
+        border-radius: 6px;
+        padding: 12px 28px;
+        height: 44px;
+        font-weight: 600;
         border: none;
         font-size: 14px;
-        letter-spacing: 0.5px;
+        letter-spacing: 0px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 61, 165, 0.15);
     }
 
     .stButton > button:hover {
-        background-color: var(--bmw-blue-dark);
+        background-color: var(--primary-dark);
+        box-shadow: 0 6px 20px rgba(0, 61, 165, 0.25);
+        transform: translateY(-2px);
+    }
+
+    .stButton > button:active {
+        transform: translateY(0);
+    }
+
+    /* 버튼 - 성공 */
+    .button-success {
+        background-color: var(--success) !important;
+    }
+
+    .button-success:hover {
+        background-color: #15803D !important;
     }
 
     /* 섹션 스페이싱 */
     .section {
-        margin-top: 80px;
-        margin-bottom: 80px;
+        margin-top: 60px;
+        margin-bottom: 60px;
     }
 
     .section-title {
         font-size: 32px;
         font-weight: 700;
-        margin-bottom: 40px;
+        margin-bottom: 32px;
         color: var(--ink);
+        border-bottom: 3px solid var(--primary);
+        padding-bottom: 12px;
     }
 
     /* 테이블 */
@@ -121,15 +232,19 @@ st.markdown("""
 
     .dataframe td, .dataframe th {
         border: 1px solid var(--hairline);
-        padding: 12px;
+        padding: 14px 12px;
         text-align: left;
         font-size: 14px;
     }
 
     .dataframe th {
+        background-color: var(--primary);
+        color: var(--on-dark);
+        font-weight: 600;
+    }
+
+    .dataframe tr:hover {
         background-color: var(--surface-soft);
-        font-weight: 700;
-        color: var(--ink);
     }
 
     .dataframe tr:nth-child(even) {
@@ -139,23 +254,152 @@ st.markdown("""
     /* 입력 필드 */
     .stTextInput > div > div > input,
     .stSelectbox > div > div > select,
-    .stTextArea > div > div > textarea {
-        border-radius: 0;
+    .stTextArea > div > div > textarea,
+    .stDateInput > div > div > input,
+    .stNumberInput > div > div > input {
+        border-radius: 6px !important;
+        border: 1px solid var(--hairline) !important;
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+        background-color: var(--canvas) !important;
+        color: var(--ink) !important;
+    }
+
+    .stTextInput > div > div > input:focus,
+    .stSelectbox > div > div > select:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 61, 165, 0.1) !important;
+    }
+
+    /* 탭 */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background-color: var(--surface-card);
+        border-radius: 6px 6px 0 0;
+        padding: 12px 20px;
+        font-weight: 500;
         border: 1px solid var(--hairline);
-        font-size: 14px;
+        border-bottom: none;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background-color: var(--primary);
+        color: white;
     }
 
     /* 헤더 */
     .header {
-        background-color: var(--canvas);
-        padding: 24px 32px;
-        border-bottom: 1px solid var(--hairline);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--on-dark);
+        padding: 32px;
+        border-radius: 8px;
         margin-bottom: 40px;
+        box-shadow: 0 4px 16px rgba(0, 61, 165, 0.15);
     }
 
     .header h1 {
         margin: 0;
-        font-size: 48px;
+        color: var(--on-dark);
+    }
+
+    .header p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 8px 0 0 0;
+    }
+
+    /* 사이드바 */
+    [data-testid="stSidebar"] {
+        background-color: var(--surface-dark);
+    }
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p {
+        color: var(--on-dark);
+    }
+
+    /* 상태 배지 */
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background-color: #DCFCE7;
+        color: #166534;
+    }
+
+    .badge-warning {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+
+    .badge-error {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+
+    .badge-info {
+        background-color: #E0F2FE;
+        color: #0C4A6E;
+    }
+
+    .badge-pending {
+        background-color: #E5E7EB;
+        color: #374151;
+    }
+
+    /* 진행률 바 */
+    .progress-bar {
+        background-color: var(--surface-strong);
+        border-radius: 4px;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent-blue) 100%);
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    /* 경고 메시지 */
+    .stAlert {
+        border-radius: 6px;
+        border-left: 4px solid transparent;
+    }
+
+    .stAlert[data-type="success"] {
+        border-left-color: var(--success);
+        background-color: #DCFCE7 !important;
+        color: #166534 !important;
+    }
+
+    .stAlert[data-type="error"] {
+        border-left-color: var(--error);
+        background-color: #FEE2E2 !important;
+        color: #991B1B !important;
+    }
+
+    .stAlert[data-type="warning"] {
+        border-left-color: var(--warning);
+        background-color: #FEF3C7 !important;
+        color: #92400E !important;
+    }
+
+    .stAlert[data-type="info"] {
+        border-left-color: var(--info);
+        background-color: #E0F2FE !important;
+        color: #0C4A6E !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -348,9 +592,9 @@ if not st.session_state.logged_in:
 
     # 헤로 밴드
     st.markdown("""
-        <div class="metric-hero">
-            <h2>📚 교육 대시보드</h2>
-            <p style="color: #bbbbbb; font-size: 16px; margin: 0;">직원 교육참여 실적 관리 시스템</p>
+        <div class="hero-band">
+            <h1>📚 직원 교육 대시보드</h1>
+            <p>직원 교육참여 실적 관리 시스템</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -358,19 +602,23 @@ if not st.session_state.logged_in:
 
     with col1:
         st.markdown("""
-            <div class="card card-light">
-                <h3 style="margin-top: 0; font-size: 18px;">👤 테스트 계정</h3>
-                <p><strong>관리자</strong><br>직번: 001 / 비번: 001</p>
-                <p><strong>직원</strong><br>직번: 002~004 / 비번: 002~004</p>
+            <div class="card card-accent">
+                <h3 style="color: white; margin-top: 0; font-size: 18px;">👤 테스트 계정</h3>
+                <div style="color: rgba(255,255,255,0.95); font-size: 14px;">
+                    <strong style="display: block; margin-top: 8px;">관리자</strong>
+                    <span style="color: rgba(255,255,255,0.9);">직번: 001 / 비번: 001</span>
+                    <strong style="display: block; margin-top: 12px;">직원</strong>
+                    <span style="color: rgba(255,255,255,0.9);">직번: 002~004 / 비번: 002~004</span>
+                </div>
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
         st.markdown("""
-            <div class="card card-light">
-                <h3 style="margin-top: 0; font-size: 18px;">⚠️ 안내</h3>
-                <p>초기 비밀번호는 직번과 동일합니다.</p>
-                <p>로그인 후 비밀번호를 변경할 수 있습니다.</p>
+            <div class="card">
+                <h3 style="color: #003DA5; margin-top: 0; font-size: 18px;">ℹ️ 안내</h3>
+                <p style="margin-bottom: 12px;"><strong>초기 비밀번호</strong><br>직번과 동일합니다</p>
+                <p style="margin-bottom: 0;"><strong>변경 가능</strong><br>로그인 후 변경할 수 있습니다</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -436,7 +684,7 @@ else:
             st.markdown("""
                 <div class="metric-hero">
                     <h2>📈 관리자 대시보드</h2>
-                    <p style="color: #bbbbbb; margin: 0;">전사 교육 현황 한눈에 보기</p>
+                    <p style="color: rgba(255,255,255,0.95); margin: 0; font-size: 16px;">전사 교육 현황 한눈에 보기</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -462,33 +710,33 @@ else:
             col1, col2, col3, col4 = st.columns(4)
             with col1:
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">전체 직원</p>
-                        <h3 style="margin: 0; font-size: 32px; color: #1c69d4;">{total_employees}</h3>
+                    <div class="metric-card">
+                        <h3>👥 {total_employees}</h3>
+                        <p>전체 직원</p>
                     </div>
                 """, unsafe_allow_html=True)
 
             with col2:
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">기본교육</p>
-                        <h3 style="margin: 0; font-size: 32px; color: #1c69d4;">{total_trainings}</h3>
+                    <div class="metric-card">
+                        <h3>📚 {total_trainings}</h3>
+                        <p>기본교육 과정</p>
                     </div>
                 """, unsafe_allow_html=True)
 
             with col3:
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">이수 기록</p>
-                        <h3 style="margin: 0; font-size: 32px; color: #1c69d4;">{completed_records}</h3>
+                    <div class="metric-card">
+                        <h3>✅ {completed_records}</h3>
+                        <p>완료된 이수 기록</p>
                     </div>
                 """, unsafe_allow_html=True)
 
             with col4:
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">승인 대기</p>
-                        <h3 style="margin: 0; font-size: 32px; color: #e22718;">{pending_approvals}</h3>
+                    <div class="metric-card" style="border-left: 4px solid #DC2626;">
+                        <h3 style="color: #DC2626;">{pending_approvals}</h3>
+                        <p>자율교육 승인 대기</p>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -786,7 +1034,7 @@ else:
             st.markdown("""
                 <div class="metric-hero">
                     <h2>📈 내 교육 현황</h2>
-                    <p style="color: #bbbbbb; margin: 0;">개인의 교육 이수 현황을 확인하세요</p>
+                    <p style="color: rgba(255,255,255,0.95); margin: 0; font-size: 16px;">개인의 교육 이수 현황을 확인하세요</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -815,20 +1063,26 @@ else:
             with col1:
                 completion_rate = int((completed_mandatory / total_mandatory * 100)) if total_mandatory > 0 else 0
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">기본교육</p>
-                        <h3 style="margin: 0 0 8px 0; font-size: 28px; color: #1c69d4;">{completed_mandatory}/{total_mandatory if total_mandatory > 0 else 0}</h3>
-                        <p style="margin: 0; color: #9a9a9a; font-size: 12px;">이수율 {completion_rate}%</p>
+                    <div class="metric-card">
+                        <h3>📚 {completed_mandatory}/{total_mandatory if total_mandatory > 0 else 0}</h3>
+                        <p style="margin-bottom: 12px;">기본교육 이수</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {completion_rate}%"></div>
+                        </div>
+                        <p style="margin-top: 8px; margin-bottom: 0; font-size: 12px; color: var(--muted);">이수율 {completion_rate}%</p>
                     </div>
                 """, unsafe_allow_html=True)
 
             with col2:
                 approval_rate = int((approved_autonomous / total_autonomous * 100)) if total_autonomous > 0 else 0
                 st.markdown(f"""
-                    <div class="card">
-                        <p style="margin: 0 0 10px 0; color: #6b6b6b; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">자율교육</p>
-                        <h3 style="margin: 0 0 8px 0; font-size: 28px; color: #1c69d4;">{approved_autonomous}/{total_autonomous if total_autonomous > 0 else 0}</h3>
-                        <p style="margin: 0; color: #9a9a9a; font-size: 12px;">승인율 {approval_rate}%</p>
+                    <div class="metric-card">
+                        <h3 style="color: #22C55E;">🎓 {approved_autonomous}/{total_autonomous if total_autonomous > 0 else 0}</h3>
+                        <p style="margin-bottom: 12px;">자율교육 승인</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="background: linear-gradient(90deg, #22C55E 0%, #16A34A 100%); width: {approval_rate}%"></div>
+                        </div>
+                        <p style="margin-top: 8px; margin-bottom: 0; font-size: 12px; color: var(--muted);">승인율 {approval_rate}%</p>
                     </div>
                 """, unsafe_allow_html=True)
 
