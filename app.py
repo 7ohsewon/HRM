@@ -244,6 +244,91 @@ def create_sample_data():
     finally:
         conn.close()
 
+# CSV 데이터 임포트
+def import_csv_data(csv_file):
+    """CSV 파일에서 교육 데이터 임포트"""
+    try:
+        # 인코딩 시도 순서
+        for encoding in ['utf-8-sig', 'euc-kr', 'cp949', 'utf-8']:
+            try:
+                df = pd.read_csv(csv_file, encoding=encoding)
+                break
+            except:
+                continue
+
+        if df is None:
+            return False, "CSV 파일을 읽을 수 없습니다."
+
+        # 컬럼 정리 (첫 번째 행이 헤더일 가능성)
+        if '직원번호' not in df.columns and df.iloc[0, 0] == '직원번호':
+            df.columns = df.iloc[0]
+            df = df[1:].reset_index(drop=True)
+
+        conn = init_db()
+        c = conn.cursor()
+
+        imported_count = 0
+
+        # 데이터 임포트
+        for _, row in df.iterrows():
+            try:
+                # 사용자 추가 (직번과 성명으로)
+                if pd.notna(row.get('직원번호')) and pd.notna(row.get('성명')):
+                    user_id = str(row['직원번호']).strip()
+                    name = str(row['성명']).strip().split('/')[0]  # "성명/직번" 형식 처리
+
+                    c.execute('INSERT OR IGNORE INTO users VALUES (?, ?, ?, ?, ?)',
+                             (user_id, name, hashlib.sha256(user_id.encode()).hexdigest(), 'employee', ''))
+
+                    # 기본교육 기록 추가
+                    if pd.notna(row.get('교육명')) and row.get('교육분야') != '자율교육':
+                        training_name = str(row['교육명']).strip()
+                        status = 'completed' if row.get('교육이수여부') == '이수' else 'pending'
+                        score = 0
+
+                        # 점수 처리
+                        try:
+                            score_val = row.get('교육점수', 0)
+                            if pd.notna(score_val):
+                                score = int(score_val)
+                        except:
+                            pass
+
+                        # 교육 ID 찾기 또는 생성
+                        c.execute('SELECT id FROM mandatory_training WHERE training_name = ?', (training_name,))
+                        result = c.fetchone()
+
+                        if result:
+                            training_id = result[0]
+                            c.execute('INSERT OR IGNORE INTO mandatory_records (user_id, training_id, status, score) VALUES (?, ?, ?, ?)',
+                                     (user_id, training_id, status, score))
+                        else:
+                            # 새 교육 생성
+                            c.execute('INSERT INTO mandatory_training (training_name, description, year) VALUES (?, ?, ?)',
+                                     (training_name, '', 2024))
+                            c.execute('INSERT INTO mandatory_records (user_id, training_id, status, score) VALUES (?, last_insert_rowid(), ?, ?)',
+                                     (user_id, status, score))
+
+                    # 자율교육 기록 추가
+                    elif pd.notna(row.get('교육명')) and row.get('교육분야') == '자율교육':
+                        training_name = str(row['교육명']).strip()
+                        provider = str(row.get('교육기관', '')).strip()
+
+                        c.execute('INSERT INTO autonomous_training (user_id, training_name, provider, training_date, status, submitted_date) VALUES (?, ?, ?, ?, ?, ?)',
+                                 (user_id, training_name, provider, datetime.now().strftime('%Y-%m-%d'), 'approved', datetime.now().strftime('%Y-%m-%d')))
+
+                    imported_count += 1
+            except Exception as e:
+                continue
+
+        conn.commit()
+        conn.close()
+
+        return True, f"✅ {imported_count}개의 교육 기록이 임포트되었습니다!"
+
+    except Exception as e:
+        return False, f"❌ 오류 발생: {str(e)}"
+
 # 로그인 함수
 def login(user_id, password):
     conn = init_db()
@@ -458,7 +543,7 @@ else:
                 </div>
             """, unsafe_allow_html=True)
 
-            tab1, tab2 = st.tabs(["📋 교육 목록", "➕ 새 교육 등록"])
+            tab1, tab2, tab3 = st.tabs(["📋 교육 목록", "➕ 새 교육 등록", "📥 CSV 임포트"])
 
             with tab1:
                 conn = init_db()
@@ -504,6 +589,32 @@ else:
                             st.rerun()
                         else:
                             st.error("교육명을 입력해주세요.")
+
+            with tab3:
+                st.markdown("<h3 class='section-title'>CSV 파일 임포트</h3>", unsafe_allow_html=True)
+
+                st.markdown("""
+                    <div class="card card-light">
+                        <p style="margin: 0; color: #6b6b6b; font-size: 14px;">
+                        <strong>지원 형식:</strong> CSV 파일<br>
+                        <strong>필수 컬럼:</strong> 직원번호, 성명, 교육명, 교육분야<br>
+                        <strong>기능:</strong> 직원 정보 및 기본/자율교육 데이터 일괄 임포트
+                        </p>
+                    </div>
+                """, unsafe_allow_html=True)
+
+                uploaded_file = st.file_uploader("CSV 파일을 선택하세요", type=['csv'])
+
+                if uploaded_file is not None:
+                    if st.button("임포트", use_container_width=True):
+                        with st.spinner("데이터를 임포트하고 있습니다..."):
+                            success, message = import_csv_data(uploaded_file)
+
+                        if success:
+                            st.success(message)
+                            st.rerun()
+                        else:
+                            st.error(message)
 
             with tab2:
                 conn = init_db()
